@@ -273,15 +273,15 @@ public class Practica2 {
          */
 
         // Crear nueva instancia para pruebas de ordenamiento
-        Practica2 p = new Practica2();
+        Practica2 prac = new Practica2();
         System.out.println("-------------------------------------------");
         // Imprimir título en azul usando código ANSI
         System.out.println("\u001B[34mQuickSort\u001B[0m");
-        p.quick_order("data.txt");
+        prac.quick_order("data.txt");
         System.out.println("-------------------------------------------");
         // Imprimir título en magenta usando código ANSI
         System.out.println("\u001B[35mShellSort\u001B[0m");
-        p.shell_order("data.txt");
+        prac.shell_order("data.txt");
         System.out.println("-------------------------------------------");
     }
 }
