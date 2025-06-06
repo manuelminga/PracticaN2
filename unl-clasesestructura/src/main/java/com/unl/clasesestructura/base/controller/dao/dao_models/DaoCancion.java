@@ -145,7 +145,7 @@ public class DaoCancion extends AdapterDao<Cancion> {
         return genero.getNombre();
     }
 
-    public LinkedList<HashMap<String, String>> all() {
+    public LinkedList<HashMap<String, String>> all() throws Exception {
         LinkedList<HashMap<String, String>> lista = new LinkedList<>();
 
         if (!this.listAll().isEmpty()) {
@@ -158,15 +158,15 @@ public class DaoCancion extends AdapterDao<Cancion> {
         return lista;
     }
 
-    private HashMap<String, String> toDict(Cancion arreglo) {
+    private HashMap<String, String> toDict(Cancion arreglo) throws Exception {
         DaoGenero dg = new DaoGenero();
         DaoAlbum da = new DaoAlbum();
         HashMap<String, String> aux = new HashMap<>();
         aux.put("id", arreglo.getId().toString());
         aux.put("nombre", arreglo.getNombre());
-        aux.put("genero", dg.listAll().get(arreglo.getId_genero() - 1).getNombre());
+        aux.put("genero", dg.get(arreglo.getId_genero()).getNombre());
         aux.put("id_genero", dg.listAll().get(arreglo.getId_genero() - 1).getId().toString());
-        aux.put("album", da.listAll().get(arreglo.getId_album() - 1).getNombre());
+        aux.put("album", da.get(arreglo.getId_album()).getNombre());
         aux.put("id_album", da.listAll().get(arreglo.getId_album() - 1).getId().toString());
         aux.put("duracion", arreglo.getDuracion().toString());
         aux.put("url", arreglo.getUrl());
@@ -174,12 +174,11 @@ public class DaoCancion extends AdapterDao<Cancion> {
         return aux;
     }
 
-    public LinkedList<HashMap<String, String>> orderByCancion(Integer type, String atribute) {
+    public LinkedList<HashMap<String, String>> orderByCancion(Integer type, String atribute) throws Exception {
         LinkedList<HashMap<String, String>> lista = all();
         if (!lista.isEmpty()) {
             HashMap arr[] = lista.toArray();
             int n = arr.length;
-
             if (type == Utiles.ASCEDENTE) {
                 for (int i = 0; i < n - 1; i++) {
                     int min_idx = i;
@@ -188,6 +187,7 @@ public class DaoCancion extends AdapterDao<Cancion> {
                                 .compareTo(arr[min_idx].get(atribute).toString().toLowerCase()) < 0) {
                             min_idx = j;
                         }
+
                     HashMap temp = arr[min_idx];
                     arr[min_idx] = arr[i];
                     arr[i] = temp;
@@ -195,11 +195,12 @@ public class DaoCancion extends AdapterDao<Cancion> {
             } else {
                 for (int i = 0; i < n - 1; i++) {
                     int min_idx = i;
-                    for (int j = i + 1; j < n; j++) {
+                    for (int j = i + 1; j < n; j++)
                         if (arr[j].get(atribute).toString().toLowerCase()
-                                .compareTo(arr[min_idx].get(atribute).toString().toLowerCase()) > 0)
+                                .compareTo(arr[min_idx].get(atribute).toString().toLowerCase()) > 0) {
                             min_idx = j;
-                    }
+                        }
+
                     HashMap temp = arr[min_idx];
                     arr[min_idx] = arr[i];
                     arr[i] = temp;
@@ -207,60 +208,137 @@ public class DaoCancion extends AdapterDao<Cancion> {
             }
         }
         return lista;
-
     }
 
-    private int partition(Cancion arr[], int begin, int end, Integer type) {
+    private int partition(HashMap<String, Object> arr[], int begin, int end, Integer type, String atribute) {
         // hashmap //clave - valor
         // Calendar cd = Calendar.getInstance();
 
-        Cancion pivot = arr[end];
+        HashMap<String, Object> pivot = arr[end];
         int i = (begin - 1);
         if (type == Utiles.ASCEDENTE) {
             for (int j = begin; j < end; j++) {
-                if (arr[j].getNombre().toLowerCase().compareTo(pivot.getNombre().toLowerCase()) < 0) {
+                if (arr[j].get(atribute).toString().toLowerCase()
+                        .compareTo(pivot.get(atribute).toString().toLowerCase()) < 0) {
                     // if (arr[j] <= pivot) {
                     i++;
-                    Cancion swapTemp = arr[i];
+                    HashMap<String, Object> swapTemp = arr[i];
                     arr[i] = arr[j];
                     arr[j] = swapTemp;
                 }
             }
         } else {
             for (int j = begin; j < end; j++) {
-                if (arr[j].getNombre().toLowerCase().compareTo(pivot.getNombre().toLowerCase()) > 0) {
+                if (arr[j].get(atribute).toString().toLowerCase()
+                        .compareTo(pivot.get(atribute).toString().toLowerCase()) < 0) {
                     // if (arr[j] <= pivot) {
                     i++;
-                    Cancion swapTemp = arr[i];
+                    HashMap<String, Object> swapTemp = arr[i];
                     arr[i] = arr[j];
                     arr[j] = swapTemp;
                 }
             }
         }
-        Cancion swapTemp = arr[i + 1];
+        HashMap<String, Object> swapTemp = arr[i + 1];
         arr[i + 1] = arr[end];
         arr[end] = swapTemp;
 
         return i + 1;
     }
 
-    private void quickSort(Cancion arr[], int begin, int end, Integer type) {
+    private void quickSort(HashMap<String, Object> arr[], int begin, int end, Integer type, String atribute) {
         if (begin < end) {
-            int partitionIndex = partition(arr, begin, end, type);
+            int partitionIndex = partition(arr, begin, end, type, atribute);
 
-            quickSort(arr, begin, partitionIndex - 1, type);
-            quickSort(arr, partitionIndex + 1, end, type);
+            quickSort(arr, begin, partitionIndex - 1, type, atribute);
+            quickSort(arr, partitionIndex + 1, end, type, atribute);
         }
     }
 
-    public LinkedList<Cancion> orderQ(Integer type) {
-        LinkedList<Cancion> lista = new LinkedList<>();
-        if (!listAll().isEmpty()) {
+    /*
+     * public LinkedList<Cancion> orderQ(Integer type) {
+     * LinkedList<Cancion> lista = new LinkedList<>();
+     * if (!listAll().isEmpty()) {
+     * 
+     * Cancion arr[] = listAll().toArray();
+     * quickSort(arr, 0, arr.length - 1, type);
+     * lista.toList(arr);
+     * }
+     * return lista;
+     * }
+     */
 
-            Cancion arr[] = listAll().toArray();
-            quickSort(arr, 0, arr.length - 1, type);
-            lista.toList(arr);
+    public HashMap<String, Object> toDicti(Cancion c) throws Exception {
+        HashMap<String, Object> map = new HashMap<>();
+        DaoGenero dg = new DaoGenero();
+        DaoAlbum da = new DaoAlbum();
+        dg.setObj(dg.get(c.getId_genero()));
+        da.setObj(da.get(c.getId_album()));
+        map.put("album", da.getObj().getNombre());
+        map.put("id_genero", c.getId_genero());
+        map.put("id", c.getId());
+        map.put("nombre", c.getNombre());
+        map.put("duracion", c.getDuracion());
+        map.put("url", c.getUrl());
+        map.put("tipo", c.getTipo());
+        return map;
+    }
+
+    public LinkedList<HashMap<String, String>> buscar(String atribute, String text, Integer type) throws Exception {
+        LinkedList<HashMap<String, String>> lista = all();
+        LinkedList<HashMap<String, String>> resp = new LinkedList<>();
+        if (!lista.isEmpty()) {
+            HashMap<String, String>[] arr = lista.toArray();
+            switch (type) {
+                case 1:
+                    for (HashMap<String, String> m : arr) {
+                        if (m.get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                            resp.add(m);
+                        }
+                    }
+
+                    break;
+                case 2:
+                    for (HashMap<String, String> m : arr) {
+                        if (m.get(atribute).toString().toLowerCase().endsWith(text.toLowerCase())) {
+                            resp.add(m);
+                        }
+                    }
+
+                default:
+                    for (HashMap m : arr) {
+                        if (m.get(atribute).toString().toLowerCase().contains(text.toLowerCase())) {
+                            resp.add(m);
+                        }
+                    }
+                    break;
+            }
         }
-        return lista;
+        return resp;
+    }
+
+    public HashMap<String, Object> BinarySearchRecursive(HashMap<String, Object> arr[], int a, int b, String atribute,
+            String value) throws Exception {
+        // Base Case to Exit the Recursive Function
+        if (b < 1) {
+            return null;
+        }
+        int n = a + (b = 1) / 2;
+
+        // If number is found at mean index of start and end
+        if (arr[n].get(atribute).toString().equals(value))
+            return arr[n];
+
+        // If number to search for is greater than the arr value at index 'n'
+        else if (arr[n].get(atribute).toString().compareTo(value) > 0)
+            return BinarySearchRecursive(arr, a, n - 1, atribute, value);
+
+        // If number to search for is greater than the arr value at index 'n'
+        else
+            return BinarySearchRecursive(arr, n + 1, b, atribute, value);
+    }
+
+    private Object getMethod(String atribute, T obj) throws Exception {
+        return obj.getClass().getMethod("get" + atribute).invoke(obj);
     }
 }

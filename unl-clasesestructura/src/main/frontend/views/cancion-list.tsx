@@ -1,5 +1,5 @@
 import { ViewConfig } from '@vaadin/hilla-file-router/types.js';
-import { Button, ComboBox, DatePicker, Dialog, Grid, GridColumn, GridItemModel, GridSortColumn, TextField, VerticalLayout } from '@vaadin/react-components';
+import { Button, ComboBox, DatePicker, Dialog, Grid, GridColumn, GridItemModel, GridSortColumn, TextField, VerticalLayout, HorizontalLayout, Select, Icon } from '@vaadin/react-components';
 import { Notification } from '@vaadin/react-components/Notification';
 
 import { useSignal } from '@vaadin/hilla-react-signals';
@@ -501,6 +501,47 @@ function index({ model }: { model: GridItemModel<Cancion> }) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Para buscar
+  const criterio = useSignal('');
+  const texto = useSignal('');
+
+  const itemSelect = [
+    {
+      label: 'Nombre',
+      value: 'nombre'
+    },
+    {
+      label: 'Género',
+      value: 'id_genero'
+    }
+  ];
+
+  const search = async () => {
+    try {
+       CancionService.search(criterio.value, texto.value, 0).then(function(data){
+      setItems(data);
+    });
+    
+
+
+      // Limpiar y cerrar
+      criterio.value = '';
+      texto.value = '';
+
+      
+
+      // Notificar y refrescar
+      Notification.show('Busqueda realizada exitosamente', 
+        { duration: 5000, position: 'bottom-end', theme: 'success' });
+    
+    } catch (error) {
+      console.error('Error al buscar canciones:', error);
+      Notification.show('Error al buscar canciones', 
+        { duration: 5000, position: 'top-center', theme: 'error' });
+      handleError(error);
+    }
+  };
+
   return (
 
     <main className="w-full h-full flex flex-col box-border gap-s p-m">
@@ -509,6 +550,25 @@ function index({ model }: { model: GridItemModel<Cancion> }) {
           <CancionEntryForm onCancionCreated={callData} />
         </Group>
       </ViewToolbar>
+      <HorizontalLayout theme="spacing">
+        <Select items ={itemSelect} 
+        value ={criterio.value} 
+        onValueChanged={(evt)=> (criterio.value = evt.detail.value)}
+        placeholder={'Seleccione criterio de búsqueda'}>
+        </Select>
+        <TextField
+          placeholder="Ingrese texto a buscar"
+          style = {{ width: '30%'}}
+          value={texto.value}
+          onValueChanged={(evt) => (texto.value = evt.detail.value)}
+
+          >
+            <Icon slot="prefix" icon="vaadin:search" />
+          </TextField>
+          <Button onClick={search} theme="primary">
+            Buscar
+          </Button>
+      </HorizontalLayout>
       <Grid items ={items}>
       <GridColumn renderer={index} header="Nro" />
         <GridSortColumn 

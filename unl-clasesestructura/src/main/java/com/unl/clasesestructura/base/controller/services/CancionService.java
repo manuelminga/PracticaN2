@@ -3,6 +3,7 @@ package com.unl.clasesestructura.base.controller.services;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.unl.clasesestructura.base.controller.dao.dao_models.DaoAlbum;
@@ -155,12 +156,20 @@ public class CancionService {
      * 
      * @return Lista de HashMap con todos los datos de canciones.
      */
-    public List<HashMap> listCancion() {
+    public List<HashMap> listCancion() throws Exception {
         return Arrays.asList(dc.all().toArray());
     }
 
-    public List<HashMap> order(String atribute, Integer type) {
+    public List<HashMap> order(String atribute, Integer type) throws Exception {
         return Arrays.asList(dc.orderByCancion(type, atribute).toArray());
+    }
+
+    public List<HashMap> search(String atribute, String text, Integer type) throws Exception {
+        LinkedList<HashMap<String, String>> lista = dc.buscar(atribute, text, type);
+        if (!lista.isEmpty())
+            return Arrays.asList(lista.toArray());
+        else
+            return new ArrayList<>();
     }
 
     /**
