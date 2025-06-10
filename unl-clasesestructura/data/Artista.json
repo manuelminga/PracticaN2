@@ -1,1 +1,32 @@
-[{"id":2,"nombre":"Benito Minga","nacionalidad":"Ecuatoriana"},{"id":3,"nombre":"Jose","nacionalidad":"Barbados"},{"id":4,"nombre":"Benito Minga","nacionalidad":"Afganistán"},{"id":4,"nombre":"Huk","nacionalidad":"Barbados"},{"id":5,"nombre":"Ben Minga","nacionalidad":"Afganistán"}]
+[
+    {
+        "id": 2,
+        "nombre": "Benito Minga",
+        "nacionalidad": "Ecuatoriana"
+    },
+    {
+        "id": 3,
+        "nombre": "Jose",
+        "nacionalidad": "Barbados"
+    },
+    {
+        "id": 4,
+        "nombre": "Benito",
+        "nacionalidad": "Afganistán"
+    },
+    {
+        "id": 4,
+        "nombre": "Huk",
+        "nacionalidad": "Barbados"
+    },
+    {
+        "id": 5,
+        "nombre": "Ben Minga",
+        "nacionalidad": "Afganistán"
+    },
+    {
+        "id": 6,
+        "nombre": "Jasiel MEco",
+        "nacionalidad": "Perú"
+    }
+]

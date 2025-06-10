@@ -35,8 +35,8 @@ type CancionEntryFormUpdateProps = () => {
 function CancionEntryForm(props: CancionEntryFormProps) {
   const dialogOpened = useSignal(false);
   const [tipos, setTipos] = useState<String[]>([]);
-  const [generos, setGeneros] = useState<{id: string, label: string}[]>([]);
-  const [albumes, setAlbumes] = useState<{id: string, label: string}[]>([]);
+  const [generos, setGeneros] = useState<{ id: string, label: string }[]>([]);
+  const [albumes, setAlbumes] = useState<{ id: string, label: string }[]>([]);
 
   const open = () => {
     dialogOpened.value = true;
@@ -55,17 +55,17 @@ function CancionEntryForm(props: CancionEntryFormProps) {
 
   const createCancion = async () => {
     try {
-          console.log('Valores actuales:', {
-      nombre: nombre.value,
-      duracion: duracion.value,
-      url: url.value,
-      tipo: tipo.value,
-      genero: genero.value
-    });
+      console.log('Valores actuales:', {
+        nombre: nombre.value,
+        duracion: duracion.value,
+        url: url.value,
+        tipo: tipo.value,
+        genero: genero.value
+      });
       // Validar campos requeridos
-      if (!nombre.value.trim() || !duracion.value.trim() || !url.value.trim() || 
-          !tipo.value.trim() || !genero.value.trim() || !album.value.trim()) { 
-        Notification.show('Complete todos los campos requeridos', 
+      if (!nombre.value.trim() || !duracion.value.trim() || !url.value.trim() ||
+        !tipo.value.trim() || !genero.value.trim() || !album.value.trim()) {
+        Notification.show('Complete todos los campos requeridos',
           { duration: 5000, position: 'top-center', theme: 'error' });
         return;
       }
@@ -73,7 +73,7 @@ function CancionEntryForm(props: CancionEntryFormProps) {
       // Validar formato duración
       const durationRegex = /^(\d{1,2}):(\d{2})$/;
       if (!durationRegex.test(duracion.value)) {
-        Notification.show('Formato inválido. Use mm:ss (Ejemplo: 03:57)', 
+        Notification.show('Formato inválido. Use mm:ss (Ejemplo: 03:57)',
           { duration: 5000, position: 'top-center', theme: 'error' });
         return;
       }
@@ -81,7 +81,7 @@ function CancionEntryForm(props: CancionEntryFormProps) {
       // Convertir a segundos
       const [minutes, seconds] = duracion.value.split(':').map(Number);
       if (seconds >= 60) {
-        Notification.show('Los segundos deben ser menores a 60', 
+        Notification.show('Los segundos deben ser menores a 60',
           { duration: 5000, position: 'top-center', theme: 'error' });
         return;
       }
@@ -108,12 +108,12 @@ function CancionEntryForm(props: CancionEntryFormProps) {
       album.value = '';
 
       // Notificar y refrescar
-      Notification.show('Canción creada exitosamente', 
+      Notification.show('Canción creada exitosamente',
         { duration: 5000, position: 'bottom-end', theme: 'success' });
       props.onCancionCreated?.();
     } catch (error) {
       console.error('Error al crear canción:', error);
-      Notification.show('Error al crear la canción', 
+      Notification.show('Error al crear la canción',
         { duration: 5000, position: 'top-center', theme: 'error' });
       handleError(error);
     }
@@ -125,10 +125,10 @@ function CancionEntryForm(props: CancionEntryFormProps) {
       .then((result) => setTipos((result || []).filter((t): t is string => t !== undefined)))
       .catch(console.error);
     CancionService.listaAlbumGenero()
-      .then((result) => setGeneros(result.map(g => ({id: g.id, label: g.label}))))
+      .then((result) => setGeneros(result.map(g => ({ id: g.id, label: g.label }))))
       .catch(console.error);
     CancionService.ListaAlbumCombo()
-      .then((result) => setAlbumes(result.map(a => ({id: a.id, label: a.label}))))
+      .then((result) => setAlbumes(result.map(a => ({ id: a.id, label: a.label }))))
       .catch(console.error);
   }, []);
 
@@ -162,32 +162,32 @@ function CancionEntryForm(props: CancionEntryFormProps) {
         )}
       >
         <VerticalLayout style={{ width: '300px', maxWidth: '100%', alignItems: 'stretch' }}>
-          <TextField 
+          <TextField
             label="Nombre"
             placeholder="Nombre de la canción"
             value={nombre.value}
             onValueChanged={(e) => nombre.value = e.detail.value}
             required
           />
-          
-<TextField 
-  label="Duración mm:ss"
-  placeholder="Ejemplo: 03:57"
-  value={duracion.value}
-  onValueChanged={(e) => duracion.value = e.detail.value}
-  pattern="^\d{1,2}:\d{2}$"
-  errorMessage="Formato: mm:ss | Ejemplo '3:57'"
-  required
-/>
-          
-          <TextField 
+
+          <TextField
+            label="Duración mm:ss"
+            placeholder="Ejemplo: 03:57"
+            value={duracion.value}
+            onValueChanged={(e) => duracion.value = e.detail.value}
+            pattern="^\d{1,2}:\d{2}$"
+            errorMessage="Formato: mm:ss | Ejemplo '3:57'"
+            required
+          />
+
+          <TextField
             label="URL"
             placeholder="URL del archivo"
             value={url.value}
             onValueChanged={(e) => url.value = e.detail.value}
             required
           />
-          
+
           <ComboBox
             label="Tipo de archivo"
             items={tipos}
@@ -196,7 +196,7 @@ function CancionEntryForm(props: CancionEntryFormProps) {
             placeholder="Seleccione tipo"
             required
           />
-          
+
           <ComboBox
             label="Género"
             items={generos}
@@ -210,7 +210,7 @@ function CancionEntryForm(props: CancionEntryFormProps) {
             placeholder="Seleccione género"
             required
           />
-                    <ComboBox
+          <ComboBox
             label="Álbum"
             items={albumes}
             itemValuePath="id"
@@ -233,8 +233,8 @@ function CancionEntryForm(props: CancionEntryFormProps) {
 function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
   const dialogOpened = useSignal(false);
   const [tipos, setTipos] = useState<String[]>([]);
-  const [generos, setGeneros] = useState<{id: string, label: string}[]>([]);
-  const [albumes, setAlbumes] = useState<{id: string, label: string}[]>([]);
+  const [generos, setGeneros] = useState<{ id: string, label: string }[]>([]);
+  const [albumes, setAlbumes] = useState<{ id: string, label: string }[]>([]);
 
   const open = () => {
     dialogOpened.value = true;
@@ -244,7 +244,7 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
     dialogOpened.value = false;
   };
 
-  const initialDuration = props.arguments.duracion 
+  const initialDuration = props.arguments.duracion
     ? `${Math.floor(props.arguments.duracion / 60)}:${(props.arguments.duracion % 60).toString().padStart(2, '0')}`
     : '';
 
@@ -258,14 +258,14 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
 
   const updateCancion = async () => {
     try {
-      if (nombre.value.trim().length > 0 && duracion.value.trim().length > 0 && 
-          url.value.trim().length > 0 && tipo.value.trim().length > 0 && genero.value.trim().length > 0 && album.value.trim().length > 0) {
-        
+      if (nombre.value.trim().length > 0 && duracion.value.trim().length > 0 &&
+        url.value.trim().length > 0 && tipo.value.trim().length > 0 && genero.value.trim().length > 0 && album.value.trim().length > 0) {
+
         const durationRegex = /^(\d{1,2}):(\d{2})$/;
         const match = durationRegex.exec(duracion.value);
-        
+
         if (!match) {
-          Notification.show('Formato de duración inválido. Use mm:ss|Ejm 3:57', 
+          Notification.show('Formato de duración inválido. Use mm:ss|Ejm 3:57',
             { duration: 5000, position: 'top-center', theme: 'error' });
           return;
         }
@@ -277,9 +277,9 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
         const tipoEnumValue = TipoArchivoEnum[tipo.value as keyof typeof TipoArchivoEnum];
         await CancionService.updateCancion(
           parseInt(ident.value),
-          nombre.value, 
-          totalSeconds.toString(), 
-          url.value, 
+          nombre.value,
+          totalSeconds.toString(),
+          url.value,
           tipoEnumValue,
           parseInt(genero.value),
           parseInt(album.value)
@@ -290,10 +290,10 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
         }
 
         dialogOpened.value = false;
-        Notification.show('Canción actualizada exitosamente', 
+        Notification.show('Canción actualizada exitosamente',
           { duration: 5000, position: 'bottom-end', theme: 'success' });
       } else {
-        Notification.show('No se pudo actualizar, faltan datos', 
+        Notification.show('No se pudo actualizar, faltan datos',
           { duration: 5000, position: 'top-center', theme: 'error' });
       }
     } catch (error) {
@@ -306,13 +306,13 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
     CancionService.listTipoArchivo()
       .then((result) => setTipos((result || []).filter((tipo): tipo is string => tipo !== undefined)))
       .catch(console.error);
-      
+
     CancionService.listaAlbumGenero()
-      .then((result) => setGeneros(result.map(g => ({id: g.id, label: g.label}))))
+      .then((result) => setGeneros(result.map(g => ({ id: g.id, label: g.label }))))
       .catch(console.error);
 
-     CancionService.ListaAlbumCombo()
-      .then((result) => setAlbumes(result.map(a => ({id: a.id, label: a.label}))))
+    CancionService.ListaAlbumCombo()
+      .then((result) => setAlbumes(result.map(a => ({ id: a.id, label: a.label }))))
       .catch(console.error);
   }, []);
 
@@ -356,13 +356,13 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
           style={{ width: '300px', maxWidth: '100%', alignItems: 'stretch' }}
         >
           <VerticalLayout style={{ alignItems: 'stretch' }}>
-            <TextField 
+            <TextField
               label="Nombre"
               placeholder='Ingrese el nombre de la canción'
               value={nombre.value}
               onValueChanged={(evt) => (nombre.value = evt.detail.value)}
             />
-            <TextField 
+            <TextField
               label="Duración"
               placeholder='Ingrese la duración mm:ss'
               value={duracion.value}
@@ -375,7 +375,7 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
               pattern="^\d{1,2}:\d{2}$"
               errorMessage="Formato inválido. Use mm:ss | Ejemplo 3:57"
             />
-            <TextField 
+            <TextField
               label="URL"
               placeholder='Ingrese la URL de la canción'
               value={url.value}
@@ -422,23 +422,23 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 
 
 export default function CancionListView() {
-const [items, setItems] = useState([]);
-const callData = () => {
-  CancionService.listCancion().then(function(data){
-    setItems(data);
-  });
-}
-useEffect(() => {
-  callData();
-},[]);
+  const [items, setItems] = useState([]);
+  const callData = () => {
+    CancionService.listCancion().then(function (data) {
+      setItems(data);
+    });
+  }
+  useEffect(() => {
+    callData();
+  }, []);
 
-function index({ model }: { model: GridItemModel<Cancion> }) {
-  return (
-    <span>
-      {model.index + 1}
-    </span>
-  );
-}
+  function index({ model }: { model: GridItemModel<Cancion> }) {
+    return (
+      <span>
+        {model.index + 1}
+      </span>
+    );
+  }
 
   function link({ item }: { item: Cancion }) {
 
@@ -458,22 +458,22 @@ function index({ model }: { model: GridItemModel<Cancion> }) {
     console.log(event);
     const direction = event.detail.direction;
     var dir = (direction === 'asc') ? 1 : 2;
-    CancionService.order(columnId, dir).then(function(data){
+    CancionService.order(columnId, dir).then(function (data) {
       setItems(data);
     });
   }
 
 
   // 1. Estado para géneros y álbumes
-  const [generos, setGeneros] = useState<{id: string, label: string}[]>([]);
-  const [albumes, setAlbumes] = useState<{id: string, label: string}[]>([]);
+  const [generos, setGeneros] = useState<{ id: string, label: string }[]>([]);
+  const [albumes, setAlbumes] = useState<{ id: string, label: string }[]>([]);
 
   // 2. Cargar géneros al montar el componente
   useEffect(() => {
     CancionService.listaAlbumGenero()
       .then((result) => setGeneros(result.map(g => ({ id: g.id, label: g.label }))))
       .catch(console.error);
-      CancionService.ListaAlbumCombo()
+    CancionService.ListaAlbumCombo()
       .then((result) => setAlbumes(result.map(a => ({ id: a.id, label: a.label }))))
       .catch(console.error);
   }, []);
@@ -484,7 +484,7 @@ function index({ model }: { model: GridItemModel<Cancion> }) {
     return genero ? genero.label : id_genero;
   };
 
-    // 4. Función para obtener el nombre del álbum
+  // 4. Función para obtener el nombre del álbum
   const getAlbumLabel = (id_album: number | string) => {
     const album = albumes.find(a => a.id === id_album?.toString());
     return album ? album.label : 'Sin álbum';
@@ -512,31 +512,33 @@ function index({ model }: { model: GridItemModel<Cancion> }) {
     },
     {
       label: 'Género',
-      value: 'id_genero'
+      value: 'genero'
     }
   ];
 
+
+
   const search = async () => {
     try {
-       CancionService.search(criterio.value, texto.value, 0).then(function(data){
-      setItems(data);
-    });
-    
+      CancionService.search(criterio.value, texto.value, 1).then(function (data) {
+        setItems(data);
+      });
+
 
 
       // Limpiar y cerrar
       criterio.value = '';
       texto.value = '';
 
-      
+
 
       // Notificar y refrescar
-      Notification.show('Busqueda realizada exitosamente', 
+      Notification.show('Busqueda realizada exitosamente',
         { duration: 5000, position: 'bottom-end', theme: 'success' });
-    
+
     } catch (error) {
       console.error('Error al buscar canciones:', error);
-      Notification.show('Error al buscar canciones', 
+      Notification.show('Error al buscar canciones',
         { duration: 5000, position: 'top-center', theme: 'error' });
       handleError(error);
     }
@@ -551,31 +553,37 @@ function index({ model }: { model: GridItemModel<Cancion> }) {
         </Group>
       </ViewToolbar>
       <HorizontalLayout theme="spacing">
-        <Select items ={itemSelect} 
-        value ={criterio.value} 
-        onValueChanged={(evt)=> (criterio.value = evt.detail.value)}
-        placeholder={'Seleccione criterio de búsqueda'}>
+        <Select items={itemSelect}
+          value={criterio.value}
+          onValueChanged={(evt) => (criterio.value = evt.detail.value)}
+          placeholder={'Seleccione criterio de búsqueda'}>
         </Select>
         <TextField
           placeholder="Ingrese texto a buscar"
-          style = {{ width: '30%'}}
+          style={{ width: '30%' }}
           value={texto.value}
           onValueChanged={(evt) => (texto.value = evt.detail.value)}
+          onKeyDown={(evt) => {
+            if (evt.key === 'Enter') {
+              search();
+            }
+          }}
 
-          >
-            <Icon slot="prefix" icon="vaadin:search" />
-          </TextField>
-          <Button onClick={search} theme="primary">
-            Buscar
-          </Button>
+
+        >
+          <Icon slot="prefix" icon="vaadin:search" />
+        </TextField>
+        <Button onClick={search} theme="primary">
+          Buscar
+        </Button>
       </HorizontalLayout>
-      <Grid items ={items}>
-      <GridColumn renderer={index} header="Nro" />
-        <GridSortColumn 
-        path={"nombre"} 
-        header="Nombre" 
-        onDirectionChanged={(e) => order(e, 'nombre')} />
-          
+      <Grid items={items}>
+        <GridColumn renderer={index} header="Nro" />
+        <GridSortColumn
+          path={"nombre"}
+          header="Nombre"
+          onDirectionChanged={(e) => order(e, 'nombre')} />
+
         {/* 4. Mostrar el nombre del género */}
         <GridSortColumn
           path="id_genero"
@@ -583,13 +591,15 @@ function index({ model }: { model: GridItemModel<Cancion> }) {
           onDirectionChanged={(e) => order(e, 'id_genero')}
           renderer={({ item }) => <span>{getGeneroLabel(item.id_genero)}</span>}
         />
-        <GridColumn 
-          header="Duración" 
-          renderer={({ item }) => <span>{formatDuration(item.duracion)}</span>} 
+
+
+        <GridColumn
+          header="Duración"
+          renderer={({ item }) => <span>{formatDuration(item.duracion)}</span>}
         />
         <GridColumn path="url" header="Url" />
         <GridColumn path="tipo" header="Tipo de Archivo" />
-          <GridColumn 
+        <GridColumn
           header="Álbum"
           renderer={({ item }) => <span>{getAlbumLabel(item.id_album)}</span>}
         />

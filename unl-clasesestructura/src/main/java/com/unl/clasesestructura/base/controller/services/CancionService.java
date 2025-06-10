@@ -3,12 +3,12 @@ package com.unl.clasesestructura.base.controller.services;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.unl.clasesestructura.base.controller.dao.dao_models.DaoAlbum;
 import com.unl.clasesestructura.base.controller.dao.dao_models.DaoCancion;
 import com.unl.clasesestructura.base.controller.dao.dao_models.DaoGenero;
+import com.unl.clasesestructura.base.controller.data_structure.LinkedList;
 import com.unl.clasesestructura.base.models.Album;
 import com.unl.clasesestructura.base.models.Genero;
 import com.unl.clasesestructura.base.models.TipoArchivoEnum;
@@ -160,12 +160,17 @@ public class CancionService {
         return Arrays.asList(dc.all().toArray());
     }
 
+    public List<HashMap> listAll() throws Exception {
+
+        return Arrays.asList(dc.all().toArray());
+    }
+
     public List<HashMap> order(String atribute, Integer type) throws Exception {
         return Arrays.asList(dc.orderByCancion(type, atribute).toArray());
     }
 
     public List<HashMap> search(String atribute, String text, Integer type) throws Exception {
-        LinkedList<HashMap<String, String>> lista = dc.buscar(atribute, text, type);
+        LinkedList<HashMap<String, String>> lista = dc.search(atribute, text, type);
         if (!lista.isEmpty())
             return Arrays.asList(lista.toArray());
         else
@@ -194,29 +199,5 @@ public class CancionService {
         }
         return lista;
     }
-
-    /*
-     * public List<Cancion> order(String atributo, Integer lista) {
-     * System.out.println(atributo + " " + lista);
-     * if (atributo.equalsIgnoreCase("nombre"))
-     * return (List<Cancion>) Arrays.asList(dc.quickSortNombre(lista).toArray());
-     * else if (atributo.equalsIgnoreCase("genero"))
-     * return (List<Cancion>) Arrays.asList(dc.quickSortGenero(lista).toArray());
-     * else
-     * return (List<Cancion>) Arrays.asList(dc.listAll().toArray());
-     * }
-     */
-
-    /*
-     * public List<Cancion> order(String atributo, Integer type) {
-     * System.out.println(atributo + " " + type);
-     * if (atributo.equalsIgnoreCase("nombre"))
-     * return (List<Cancion>) Arrays.asList(dc.quickSortNombre(type).toArray());
-     * else if (atributo.equalsIgnoreCase("genero"))
-     * return (List<Cancion>) Arrays.asList(dc.quickSortGenero(type).toArray());
-     * else
-     * return (List<Cancion>) Arrays.asList(dc.listAll().toArray());
-     * }
-     */
 
 }

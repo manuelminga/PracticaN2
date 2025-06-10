@@ -179,6 +179,7 @@ public class DaoCancion extends AdapterDao<Cancion> {
         if (!lista.isEmpty()) {
             HashMap arr[] = lista.toArray();
             int n = arr.length;
+
             if (type == Utiles.ASCEDENTE) {
                 for (int i = 0; i < n - 1; i++) {
                     int min_idx = i;
@@ -187,7 +188,6 @@ public class DaoCancion extends AdapterDao<Cancion> {
                                 .compareTo(arr[min_idx].get(atribute).toString().toLowerCase()) < 0) {
                             min_idx = j;
                         }
-
                     HashMap temp = arr[min_idx];
                     arr[min_idx] = arr[i];
                     arr[i] = temp;
@@ -195,12 +195,11 @@ public class DaoCancion extends AdapterDao<Cancion> {
             } else {
                 for (int i = 0; i < n - 1; i++) {
                     int min_idx = i;
-                    for (int j = i + 1; j < n; j++)
+                    for (int j = i + 1; j < n; j++) {
                         if (arr[j].get(atribute).toString().toLowerCase()
-                                .compareTo(arr[min_idx].get(atribute).toString().toLowerCase()) > 0) {
+                                .compareTo(arr[min_idx].get(atribute).toString().toLowerCase()) > 0)
                             min_idx = j;
-                        }
-
+                    }
                     HashMap temp = arr[min_idx];
                     arr[min_idx] = arr[i];
                     arr[i] = temp;
@@ -208,13 +207,14 @@ public class DaoCancion extends AdapterDao<Cancion> {
             }
         }
         return lista;
+
     }
 
-    private int partition(HashMap<String, Object> arr[], int begin, int end, Integer type, String atribute) {
+    private int partition(HashMap<String, String> arr[], int begin, int end, Integer type, String atribute) {
         // hashmap //clave - valor
         // Calendar cd = Calendar.getInstance();
 
-        HashMap<String, Object> pivot = arr[end];
+        HashMap<String, String> pivot = arr[end];
         int i = (begin - 1);
         if (type == Utiles.ASCEDENTE) {
             for (int j = begin; j < end; j++) {
@@ -222,7 +222,7 @@ public class DaoCancion extends AdapterDao<Cancion> {
                         .compareTo(pivot.get(atribute).toString().toLowerCase()) < 0) {
                     // if (arr[j] <= pivot) {
                     i++;
-                    HashMap<String, Object> swapTemp = arr[i];
+                    HashMap<String, String> swapTemp = arr[i];
                     arr[i] = arr[j];
                     arr[j] = swapTemp;
                 }
@@ -233,20 +233,20 @@ public class DaoCancion extends AdapterDao<Cancion> {
                         .compareTo(pivot.get(atribute).toString().toLowerCase()) < 0) {
                     // if (arr[j] <= pivot) {
                     i++;
-                    HashMap<String, Object> swapTemp = arr[i];
+                    HashMap<String, String> swapTemp = arr[i];
                     arr[i] = arr[j];
                     arr[j] = swapTemp;
                 }
             }
         }
-        HashMap<String, Object> swapTemp = arr[i + 1];
+        HashMap<String, String> swapTemp = arr[i + 1];
         arr[i + 1] = arr[end];
         arr[end] = swapTemp;
 
         return i + 1;
     }
 
-    private void quickSort(HashMap<String, Object> arr[], int begin, int end, Integer type, String atribute) {
+    private void quickSort(HashMap<String, String> arr[], int begin, int end, Integer type, String atribute) {
         if (begin < end) {
             int partitionIndex = partition(arr, begin, end, type, atribute);
 
@@ -255,60 +255,106 @@ public class DaoCancion extends AdapterDao<Cancion> {
         }
     }
 
+    public LinkedList<HashMap<String, String>> orderQ(Integer type, String atribute) throws Exception {
+        LinkedList<HashMap<String, String>> lista = new LinkedList<>();
+        if (!listAll().isEmpty()) {
+
+            HashMap<String, String> arr[] = all().toArray();
+            quickSort(arr, 0, arr.length - 1, type, atribute);
+            lista.toList(arr);
+        }
+        return lista;
+    }
+
     /*
-     * public LinkedList<Cancion> orderQ(Integer type) {
-     * LinkedList<Cancion> lista = new LinkedList<>();
-     * if (!listAll().isEmpty()) {
-     * 
-     * Cancion arr[] = listAll().toArray();
-     * quickSort(arr, 0, arr.length - 1, type);
-     * lista.toList(arr);
-     * }
-     * return lista;
+     * public HashMap<String, Object> toDicti(Cancion c) throws Exception {
+     * HashMap<String, Object> map = new HashMap<>();
+     * DaoGenero dg = new DaoGenero();
+     * DaoAlbum da = new DaoAlbum();
+     * dg.setObj(dg.get(c.getId_genero()));
+     * da.setObj(da.get(c.getId_album()));
+     * map.put("album", da.getObj().getNombre());
+     * map.put("id_genero", c.getId_genero());
+     * map.put("id", c.getId());
+     * map.put("nombre", c.getNombre());
+     * map.put("duracion", c.getDuracion());
+     * map.put("url", c.getUrl());
+     * map.put("tipo", c.getTipo());
+     * return map;
      * }
      */
 
-    public HashMap<String, Object> toDicti(Cancion c) throws Exception {
-        HashMap<String, Object> map = new HashMap<>();
-        DaoGenero dg = new DaoGenero();
-        DaoAlbum da = new DaoAlbum();
-        dg.setObj(dg.get(c.getId_genero()));
-        da.setObj(da.get(c.getId_album()));
-        map.put("album", da.getObj().getNombre());
-        map.put("id_genero", c.getId_genero());
-        map.put("id", c.getId());
-        map.put("nombre", c.getNombre());
-        map.put("duracion", c.getDuracion());
-        map.put("url", c.getUrl());
-        map.put("tipo", c.getTipo());
-        return map;
-    }
-
-    public LinkedList<HashMap<String, String>> buscar(String atribute, String text, Integer type) throws Exception {
+    public LinkedList<HashMap<String, String>> search(String atribute, String text, Integer type) throws Exception {
         LinkedList<HashMap<String, String>> lista = all();
         LinkedList<HashMap<String, String>> resp = new LinkedList<>();
+
         if (!lista.isEmpty()) {
+            // 1. Ordena la lista por el atributo especificado
+            lista = orderQ(Utiles.ASCEDENTE, atribute);
+            // 2. Transforma la lista a un arreglo de HashMap
             HashMap<String, String>[] arr = lista.toArray();
+
+            // 3. Busca la posición de la mitad del arreglo para optimizar la búsqueda
+            Integer n = bynaryLineal(arr, atribute, text);
+            System.out.println("La N de la mitad es: " + n);
+
             switch (type) {
                 case 1:
-                    for (HashMap<String, String> m : arr) {
-                        if (m.get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
-                            resp.add(m);
+                    // escogemos la derecha
+                    if (n > 0) {
+                        for (int i = n; i < arr.length; i++) {
+                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                                resp.add(arr[i]);
+                            }
+                        }
+                    } else if (n < 0) {
+                        // escogemos la izquierda desde 0 hasta n
+                        n *= -1;
+                        for (int i = 0; i < n; i++) {
+                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                                resp.add(arr[i]);
+                            }
+                        }
+                    } else {
+                        // escogemos todo el arreglo
+                        for (int i = 0; i < arr.length; i++) {
+                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                                resp.add(arr[i]);
+                            }
                         }
                     }
 
                     break;
                 case 2:
-                    for (HashMap<String, String> m : arr) {
-                        if (m.get(atribute).toString().toLowerCase().endsWith(text.toLowerCase())) {
-                            resp.add(m);
+                    // escogemos la derecha
+                    if (n > 0) {
+                        for (int i = n; i < arr.length; i++) {
+                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                                resp.add(arr[i]);
+                            }
+                        }
+                    } else if (n < 0) {
+                        // escogemos la izquierda desde 0 hasta n
+                        n *= -1;
+                        for (int i = 0; i < n; i++) {
+                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                                resp.add(arr[i]);
+                            }
+                        }
+                    } else {
+                        // escogemos todo el arreglo
+                        for (int i = 0; i < arr.length; i++) {
+                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                                resp.add(arr[i]);
+                            }
                         }
                     }
 
+                    break;
                 default:
-                    for (HashMap m : arr) {
-                        if (m.get(atribute).toString().toLowerCase().contains(text.toLowerCase())) {
-                            resp.add(m);
+                    for (int i = 0; i < arr.length; i++) {
+                        if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                            resp.add(arr[i]);
                         }
                     }
                     break;
@@ -317,28 +363,21 @@ public class DaoCancion extends AdapterDao<Cancion> {
         return resp;
     }
 
-    public HashMap<String, Object> BinarySearchRecursive(HashMap<String, Object> arr[], int a, int b, String atribute,
-            String value) throws Exception {
-        // Base Case to Exit the Recursive Function
-        if (b < 1) {
-            return null;
+    private Integer bynaryLineal(HashMap<String, String>[] array, String atribute, String text) {
+        Integer half = 0;
+        if (!(array.length == 0) && !text.isEmpty()) {
+            half = array.length / 2;
+            int aux = 0;
+
+            if (text.trim().toLowerCase().charAt(0) > array[half].get(atribute).toString().trim().toLowerCase()
+                    .charAt(0))
+                aux = 1;
+            else if (text.trim().toLowerCase().charAt(0) < array[half].get(atribute).toString().trim().toLowerCase()
+                    .charAt(0))
+                aux = -1;
+
+            half = half * aux;
         }
-        int n = a + (b = 1) / 2;
-
-        // If number is found at mean index of start and end
-        if (arr[n].get(atribute).toString().equals(value))
-            return arr[n];
-
-        // If number to search for is greater than the arr value at index 'n'
-        else if (arr[n].get(atribute).toString().compareTo(value) > 0)
-            return BinarySearchRecursive(arr, a, n - 1, atribute, value);
-
-        // If number to search for is greater than the arr value at index 'n'
-        else
-            return BinarySearchRecursive(arr, n + 1, b, atribute, value);
-    }
-
-    private Object getMethod(String atribute, T obj) throws Exception {
-        return obj.getClass().getMethod("get" + atribute).invoke(obj);
+        return half;
     }
 }
