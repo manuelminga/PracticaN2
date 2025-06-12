@@ -97,11 +97,11 @@ public class AlbumService {
      */
     public List<HashMap> ListaBandaCombo() {
         List<HashMap> lista = new ArrayList<>();
-        DaoBanda da = new DaoBanda(); // DAO para bandas
+        DaoBanda db = new DaoBanda(); // DAO para bandas
 
-        if (!da.listAll().isEmpty()) {
+        if (!db.listAll().isEmpty()) {
             // Convierte la lista de bandas a un arreglo
-            Banda[] arreglo = da.listAll().toArray();
+            Banda[] arreglo = db.listAll().toArray();
 
             // Formatea cada banda como {id, label} para frontend
             for (int i = 0; i < arreglo.length; i++) {

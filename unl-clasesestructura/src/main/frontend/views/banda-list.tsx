@@ -1,5 +1,5 @@
 import { ViewConfig } from '@vaadin/hilla-file-router/types.js';
-import { Button, ComboBox, DatePicker, Dialog, Grid, GridColumn, GridItemModel, TextField, VerticalLayout } from '@vaadin/react-components';
+import { Button, ComboBox, DatePicker, Dialog, Grid, GridColumn, GridItemModel, GridSortColumn, TextField, VerticalLayout } from '@vaadin/react-components';
 import { Notification } from '@vaadin/react-components/Notification';
 
 import { useSignal } from '@vaadin/hilla-react-signals';
@@ -275,12 +275,13 @@ export default function BandaListView() {
       <Grid dataProvider={dataProvider.dataProvider}>
         <GridColumn header="Nro" renderer={index} />
         <GridColumn path="nombre" header="Nombre del artista" />
-        <GridColumn header="Fecha de creación" renderer={fechaRenderer} />
-
-        {/* <GridColumn path="fecha" header="Fecha" />
-        <GridColumn path="fecha" header="Fecha">
-          {({ item }) => (item.dueDate ? dateFormatter.format(new Date(item.dueDate)) : 'Never')}
-        </GridColumn> */}
+        
+        <GridSortColumn
+          path="fecha"
+          header="Fecha de creación"
+          onDirectionChanged={(e) => order(e, 'fecha')}
+          renderer={({ item }) => <span>{dateFormatter.format(new Date(item.fecha))}</span>}
+        />
         <GridColumn header="Acciones" renderer={link} />
       </Grid>
     </main>

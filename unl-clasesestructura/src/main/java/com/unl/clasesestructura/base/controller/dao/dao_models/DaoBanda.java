@@ -1,12 +1,13 @@
 package com.unl.clasesestructura.base.controller.dao.dao_models;
 
-import java.util.Date;
-
 import com.unl.clasesestructura.base.controller.dao.AdapterDao;
+import com.unl.clasesestructura.base.controller.data_structure.LinkedList;
 import com.unl.clasesestructura.base.models.Banda;
 
 public class DaoBanda extends AdapterDao<Banda> {
     private Banda obj;
+
+    private LinkedList<Banda> aux;
 
     public DaoBanda() {
         super(Banda.class);
@@ -43,33 +44,6 @@ public class DaoBanda extends AdapterDao<Banda> {
             // System.out.println(e);
             // Log error
             return false;
-        }
-    }
-
-    public static void main(String[] args) {
-
-        DaoBanda da = new DaoBanda();
-        da.getObj().setId(da.listAll().getLength() + 1);
-        da.getObj().setNombre("Los del Rio");
-        da.getObj().setFecha(new Date());
-
-        if (da.save()) {
-            System.out.println("GUARDADO");
-        } else {
-            System.out.println("ERROR AL GUARDAR");
-        }
-
-        da.setObj(null);
-
-        da.getObj().setId(da.listAll().getLength() + 1);
-        da.getObj().setNombre("La autentica");
-        da.getObj().setFecha(new Date());
-
-        if (da.save()) {
-            System.out.println("GUARDADO");
-        } else {
-            System.out.println("ERROR AL GUARDAR");
-
         }
     }
 

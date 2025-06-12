@@ -91,7 +91,7 @@ function AlbumEntryForm(props: AlbumEntryFormProps) {
   useEffect(() => {
 
     AlbumService.ListaBandaCombo()
-      .then((result) => setBanda(result.map(a => ({ id: a.id, label: a.label }))))
+      .then((result) => setBanda(result.map(b => ({ id: b.id, label: b.label }))))
       .catch(console.error);
   }, []);
 
@@ -138,7 +138,7 @@ function AlbumEntryForm(props: AlbumEntryFormProps) {
                 itemValuePath="id"
                 itemLabelPath="label"
                 value={Banda.value}
-                onValueChanged={(e) => Banda.value = e.detail.value}
+                onValueChanged={(e) => {Banda.value = e.detail.value}}
                 placeholder="Seleccione banda"
                 required
             />
@@ -166,16 +166,18 @@ function AlbumEntryFormUpdate(props: AlbumEntryFormUpdateProps) {
 
   const nombre = useSignal(props.arguments.nombre);
     const Banda = useSignal(props.arguments.id_banda?.toString() || '');
+    const fecha = useSignal(props.arguments.fechaCreacion);
   
 
   const updateAlbum = async () => {
     try {
-      if (nombre.value.trim().length > 0 && Banda.value.trim().length > 0) {
+      if (nombre.value.trim().length > 0 && Banda.value.trim().length > 0 && fecha.value.trim().length > 0) {
 
         await AlbumService.updateAlbum(
           parseInt(props.arguments.id),
           nombre.value,
-          Banda.value
+          fecha.value,
+          parseInt(Banda.value)
         );
 
         if (props.onAlbumUpdate) {
@@ -197,7 +199,7 @@ function AlbumEntryFormUpdate(props: AlbumEntryFormUpdateProps) {
 
   useEffect(() => {
     AlbumService.ListaBandaCombo()
-      .then((result) => setBanda(result.map(a => ({ id: a.id, label: a.label }))))
+      .then((result) => setBanda(result.map(b => ({ id: b.id, label: b.label }))))
       .catch(console.error);
   }, []);
 
@@ -256,7 +258,13 @@ function AlbumEntryFormUpdate(props: AlbumEntryFormUpdateProps) {
               value={Banda.value}
               onValueChanged={(e) => (Banda.value = e.detail.value)}
               placeholder="Seleccione banda"
-              required
+            />
+            <DatePicker
+              label="Fecha de creación"
+              placeholder="Seleccione una fecha"
+              aria-label="Seleccione una fecha"
+              value={fecha.value ?? undefined}
+              onValueChanged={(evt) => (fecha.value = evt.detail.value)}
             />
           </VerticalLayout>
         </VerticalLayout>
@@ -320,7 +328,6 @@ export default function AlbumListView() {
 
   // 1. Estado para bandas y álbumes
   const [bandas, setBandas] = useState<{ id: string, label: string }[]>([]);
-  const [albumes, setAlbumes] = useState<{ id: string, label: string }[]>([]);
 
   // 2. Cargar bandas al montar el componente
   useEffect(() => {
@@ -426,6 +433,12 @@ export default function AlbumListView() {
           header="Banda"
           onDirectionChanged={(e) => order(e, 'id_banda')}
           renderer={({ item }) => <span>{getBandaLabel(item.id_banda)}</span>}
+        />
+        <GridSortColumn
+          path="fecha"
+          header="Fecha Lanzamiento"
+          onDirectionChanged={(e) => order(e, 'fecha')}
+          renderer={({ item }) => <span>{dateFormatter.format(new Date(item.fecha))}</span>}
         />
         <GridColumn header="Acciones" renderer={link} />
       </Grid>

@@ -6,6 +6,7 @@ import com.unl.clasesestructura.base.controller.Utiles;
 import com.unl.clasesestructura.base.controller.dao.AdapterDao;
 import com.unl.clasesestructura.base.controller.data_structure.LinkedList;
 import com.unl.clasesestructura.base.models.Album;
+import com.unl.clasesestructura.base.models.Banda;
 
 public class DaoAlbum extends AdapterDao<Album> {
     private Album obj;
@@ -56,6 +57,13 @@ public class DaoAlbum extends AdapterDao<Album> {
         return aux;
     }
 
+    // Método auxiliar para obtener el nombre de la banda de un álbum
+    private String getNombreBanda(Album album) {
+        // Busca la banda por id y retorna su nombre
+        Banda banda = new DaoBanda().listAll().get(album.getId_banda() - 1);
+        return banda.getNombre();
+    }
+
     public LinkedList<HashMap<String, String>> all() throws Exception {
         LinkedList<HashMap<String, String>> lista = new LinkedList<>();
 
@@ -74,14 +82,13 @@ public class DaoAlbum extends AdapterDao<Album> {
         HashMap<String, String> aux = new HashMap<>();
         aux.put("id", arreglo.getId().toString());
         aux.put("nombre", arreglo.getNombre());
-        aux.put("fecha", arreglo.getFecha() != null ? arreglo.getFecha().toString() : "");
         aux.put("banda", db.get(arreglo.getId_banda()).getNombre());
         aux.put("id_banda", db.listAll().get(arreglo.getId_banda() - 1).getId().toString());
-
+        aux.put("fecha", arreglo.getFecha() != null ? arreglo.getFecha().toString() : "");
         return aux;
     }
 
-    public LinkedList<HashMap<String, String>> orderByCancion(Integer type, String atribute) throws Exception {
+    public LinkedList<HashMap<String, String>> orderByAlbum(Integer type, String atribute) throws Exception {
         LinkedList<HashMap<String, String>> lista = all();
         if (!lista.isEmpty()) {
             HashMap arr[] = lista.toArray();
