@@ -169,12 +169,17 @@ public class CancionService {
         return Arrays.asList(dc.orderByCancion(type, atribute).toArray());
     }
 
-    public List<HashMap> search(String atribute, String text, Integer type) throws Exception {
+    public HashMap<String, Object> search(String atribute, String text, Integer type) throws Exception {
         LinkedList<HashMap<String, String>> lista = dc.search(atribute, text, type);
-        if (!lista.isEmpty())
-            return Arrays.asList(lista.toArray());
-        else
-            return new ArrayList<>();
+        HashMap<String, Object> response = new HashMap<>();
+        if (!lista.isEmpty()) {
+            response.put("data", Arrays.asList(lista.toArray()));
+            response.put("message", "");
+        } else {
+            response.put("data", new ArrayList<>());
+            response.put("message", "Datos no encontrados");
+        }
+        return response;
     }
 
     /**

@@ -518,23 +518,30 @@ export default function CancionListView() {
 
 
 
-  const search = async () => {
-    try {
-      CancionService.search(criterio.value, texto.value, 1).then(function (data) {
-        setItems(data);
-      });
+const search = async () => {
+  try {
+    CancionService.search(criterio.value, texto.value, 0).then(function (data) {
+      setItems(data.data); // Actualiza solo con la lista de resultados
 
+      if (data.message) {
+        Notification.show(data.message, {
+          duration: 5000,
+          position: 'bottom-center',
+          theme: 'error'
+        });
+      } else {
+        Notification.show('Datos encontrados', {
+          duration: 5000,
+          position: 'bottom-center',
+          theme: 'success'
+        });
+      }
+    });
 
-
-      // Limpiar y cerrar
+/*       // Limpiar y cerrar
       criterio.value = '';
-      texto.value = '';
+      texto.value = ''; */
 
-
-
-      // Notificar y refrescar
-      Notification.show('Busqueda realizada exitosamente',
-        { duration: 5000, position: 'bottom-end', theme: 'success' });
 
     } catch (error) {
       console.error('Error al buscar canciones:', error);
@@ -552,11 +559,11 @@ export default function CancionListView() {
           <CancionEntryForm onCancionCreated={callData} />
         </Group>
       </ViewToolbar>
-      <HorizontalLayout theme="spacing">
+      <HorizontalLayout theme="spacing" style={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}>
         <Select items={itemSelect}
           value={criterio.value}
           onValueChanged={(evt) => (criterio.value = evt.detail.value)}
-          placeholder={'Seleccione criterio de búsqueda'}>
+          placeholder={'Seleccione'}>
         </Select>
         <TextField
           placeholder="Ingrese texto a buscar"

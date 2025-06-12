@@ -266,24 +266,6 @@ public class DaoCancion extends AdapterDao<Cancion> {
         return lista;
     }
 
-    /*
-     * public HashMap<String, Object> toDicti(Cancion c) throws Exception {
-     * HashMap<String, Object> map = new HashMap<>();
-     * DaoGenero dg = new DaoGenero();
-     * DaoAlbum da = new DaoAlbum();
-     * dg.setObj(dg.get(c.getId_genero()));
-     * da.setObj(da.get(c.getId_album()));
-     * map.put("album", da.getObj().getNombre());
-     * map.put("id_genero", c.getId_genero());
-     * map.put("id", c.getId());
-     * map.put("nombre", c.getNombre());
-     * map.put("duracion", c.getDuracion());
-     * map.put("url", c.getUrl());
-     * map.put("tipo", c.getTipo());
-     * return map;
-     * }
-     */
-
     public LinkedList<HashMap<String, String>> search(String atribute, String text, Integer type) throws Exception {
         LinkedList<HashMap<String, String>> lista = all();
         LinkedList<HashMap<String, String>> resp = new LinkedList<>();
@@ -299,11 +281,11 @@ public class DaoCancion extends AdapterDao<Cancion> {
             System.out.println("La N de la mitad es: " + n);
 
             switch (type) {
-                case 1:
+                case 1 -> {
                     // escogemos la derecha
                     if (n > 0) {
                         for (int i = n; i < arr.length; i++) {
-                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                            if (arr[i].get(atribute).toString().toLowerCase().contains(text.toLowerCase())) {
                                 resp.add(arr[i]);
                             }
                         }
@@ -311,25 +293,26 @@ public class DaoCancion extends AdapterDao<Cancion> {
                         // escogemos la izquierda desde 0 hasta n
                         n *= -1;
                         for (int i = 0; i < n; i++) {
-                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                            if (arr[i].get(atribute).toString().toLowerCase().contains(text.toLowerCase())) {
                                 resp.add(arr[i]);
                             }
                         }
                     } else {
                         // escogemos todo el arreglo
                         for (int i = 0; i < arr.length; i++) {
-                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                            if (arr[i].get(atribute).toString().toLowerCase().contains(text.toLowerCase())) {
                                 resp.add(arr[i]);
                             }
                         }
                     }
 
                     break;
-                case 2:
+                }
+                case 2 -> {
                     // escogemos la derecha
                     if (n > 0) {
                         for (int i = n; i < arr.length; i++) {
-                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                            if (arr[i].get(atribute).toString().toLowerCase().contains(text.toLowerCase())) {
                                 resp.add(arr[i]);
                             }
                         }
@@ -337,27 +320,28 @@ public class DaoCancion extends AdapterDao<Cancion> {
                         // escogemos la izquierda desde 0 hasta n
                         n *= -1;
                         for (int i = 0; i < n; i++) {
-                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                            if (arr[i].get(atribute).toString().toLowerCase().contains(text.toLowerCase())) {
                                 resp.add(arr[i]);
                             }
                         }
                     } else {
                         // escogemos todo el arreglo
                         for (int i = 0; i < arr.length; i++) {
-                            if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                            if (arr[i].get(atribute).toString().toLowerCase().contains(text.toLowerCase())) {
                                 resp.add(arr[i]);
                             }
                         }
                     }
-
                     break;
-                default:
+                }
+                default -> {
                     for (int i = 0; i < arr.length; i++) {
-                        if (arr[i].get(atribute).toString().toLowerCase().startsWith(text.toLowerCase())) {
+                        if (arr[i].get(atribute).toString().toLowerCase().contains(text.toLowerCase())) {
                             resp.add(arr[i]);
                         }
                     }
                     break;
+                }
             }
         }
         return resp;
