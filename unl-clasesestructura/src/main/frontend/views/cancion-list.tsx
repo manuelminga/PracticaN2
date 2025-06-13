@@ -229,7 +229,8 @@ function CancionEntryForm(props: CancionEntryFormProps) {
   );
 }
 
-////***************************** */
+////******************Editar Cancion*********** */
+
 function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
   const dialogOpened = useSignal(false);
   const [tipos, setTipos] = useState<String[]>([]);
