@@ -276,4 +276,20 @@ public class DaoAlbum extends AdapterDao<Album> {
         }
         return half;
     }
+
+    public static void main(String[] args) {
+        DaoAlbum da = new DaoAlbum();
+
+        // Crear un nuevo álbum
+        da.getObj().setId(da.listAll().getLength() + 1);
+        da.getObj().setNombre("Nuevo Álbum");
+        da.getObj().setFecha(new java.util.Date()); // Fecha actual
+        da.getObj().setId_banda(1); // Asigna el id de una banda existente
+
+        if (da.save()) {
+            System.out.println("GUARDADO");
+        } else {
+            System.out.println("ERROR AL GUARDAR");
+        }
+    }
 }

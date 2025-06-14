@@ -5,13 +5,12 @@ import { Notification } from '@vaadin/react-components/Notification';
 import { useSignal } from '@vaadin/hilla-react-signals';
 import handleError from 'Frontend/views/_ErrorHandler';
 import { Group, ViewToolbar } from 'Frontend/components/ViewToolbar';
-
 import { useDataProvider } from '@vaadin/hilla-react-crud';
-import { AlbumService} from 'Frontend/generated/endpoints';
-
-import { useEffect, useState } from 'react';
+import { AlbumService } from 'Frontend/generated/endpoints';
 import Album from 'Frontend/generated/com/unl/clasesestructura/base/models/Album';
+import { useEffect, useState } from 'react';
 import { order, updateAlbum } from 'Frontend/generated/AlbumService';
+import { data } from 'react-router';
 
 export const config: ViewConfig = {
   title: 'Album',
@@ -45,15 +44,17 @@ function AlbumEntryForm(props: AlbumEntryFormProps) {
 
   const nombre = useSignal('');
   const Banda = useSignal('');
+  const fecha = useSignal('');
 
   const createAlbum = async () => {
     try {
       console.log('Valores actuales:', {
         nombre: nombre.value,
-        Banda: Banda.value
+        Banda: Banda.value,
+        fecha: fecha.value
       });
       // Validar campos requeridos
-      if (!nombre.value.trim() || !Banda.value.trim()) {
+      if (!nombre.value.trim() || !Banda.value.trim() || !fecha.value.trim()) {
         Notification.show('Complete todos los campos requeridos',
           { duration: 5000, position: 'top-center', theme: 'error' });
         return;
@@ -64,14 +65,16 @@ function AlbumEntryForm(props: AlbumEntryFormProps) {
 
       // Crear álbum
       await AlbumService.createAlbum(
-        nombre.value.trim(),
-        Banda.value.trim(),
+        nombre.value,
+        fecha.value!,
         parseInt(Banda.value)
+
       );
 
 
       // Limpiar y cerrar
       nombre.value = '';
+      fecha.value = '';
       Banda.value = '';
       dialogOpened.value = false;
 
@@ -132,16 +135,23 @@ function AlbumEntryForm(props: AlbumEntryFormProps) {
             onValueChanged={(e) => nombre.value = e.detail.value}
             required
           />
-            <ComboBox
-                label="Banda"
-                items={banda}
-                itemValuePath="id"
-                itemLabelPath="label"
-                value={Banda.value}
-                onValueChanged={(e) => {Banda.value = e.detail.value}}
-                placeholder="Seleccione banda"
-                required
-            />
+          <ComboBox
+            label="Banda"
+            items={banda}
+            itemValuePath="id"
+            itemLabelPath="label"
+            value={Banda.value}
+            onValueChanged={(e) => { Banda.value = e.detail.value }}
+            placeholder="Seleccione banda"
+            required
+          />
+          <DatePicker
+            label="Fecha de creación"
+            placeholder="Seleccione una fecha"
+            aria-label="Seleccione una fecha"
+            value={fecha.value ?? undefined}
+            onValueChanged={(evt) => (fecha.value = evt.detail.value)}
+          />
         </VerticalLayout>
       </Dialog>
       <Button onClick={open} theme="primary">
@@ -165,9 +175,9 @@ function AlbumEntryFormUpdate(props: AlbumEntryFormUpdateProps) {
   };
 
   const nombre = useSignal(props.arguments.nombre);
-    const Banda = useSignal(props.arguments.id_banda?.toString() || '');
-    const fecha = useSignal(props.arguments.fechaCreacion);
-  
+  const Banda = useSignal(props.arguments.id_banda?.toString() || '');
+  const fecha = useSignal(props.arguments.fechaCreacion);
+
 
   const updateAlbum = async () => {
     try {
@@ -205,7 +215,7 @@ function AlbumEntryFormUpdate(props: AlbumEntryFormUpdateProps) {
 
 
 
-    return (
+  return (
     <>
       <Dialog
         aria-label="Editar Álbum"
@@ -436,9 +446,8 @@ export default function AlbumListView() {
         />
         <GridSortColumn
           path="fecha"
-          header="Fecha Lanzamiento"
+          header="Fecha de creación"
           onDirectionChanged={(e) => order(e, 'fecha')}
-          renderer={({ item }) => <span>{dateFormatter.format(new Date(item.fecha))}</span>}
         />
         <GridColumn header="Acciones" renderer={link} />
       </Grid>

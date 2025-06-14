@@ -26,7 +26,7 @@ public class BandaService {
     public void createBanda(@NotEmpty @NotBlank @NonNull String nombre, @NonNull Date fecha) throws Exception {
         if (nombre.trim().length() > 0 && fecha.toString().length() > 0) {
             db.getObj().setNombre(nombre);
-            db.getObj().setFecha((fecha));
+            db.getObj().setFecha(fecha);
             if (!db.save()) {
                 throw new Exception("Error al guardar la banda");
             }
@@ -38,7 +38,7 @@ public class BandaService {
         if (id != null && id > 0 && nombre.trim().length() > 0 && fecha.toString().length() > 0) {
             db.setObj(db.listAll().get(id - 1));
             db.getObj().setNombre(nombre);
-            db.getObj().setFecha((fecha));
+            db.getObj().setFecha(fecha);
             if (!db.update(id - 1)) {
                 throw new Exception("Error no se pudo modificar los datos de la Banda");
             }

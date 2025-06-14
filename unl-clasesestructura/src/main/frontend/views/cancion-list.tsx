@@ -60,7 +60,8 @@ function CancionEntryForm(props: CancionEntryFormProps) {
         duracion: duracion.value,
         url: url.value,
         tipo: tipo.value,
-        genero: genero.value
+        genero: genero.value,
+        album: album.value
       });
       // Validar campos requeridos
       if (!nombre.value.trim() || !duracion.value.trim() || !url.value.trim() ||
@@ -229,7 +230,8 @@ function CancionEntryForm(props: CancionEntryFormProps) {
   );
 }
 
-////***************************** */
+////******************Editar Cancion*********** */
+
 function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
   const dialogOpened = useSignal(false);
   const [tipos, setTipos] = useState<String[]>([]);

@@ -5,7 +5,7 @@ import java.util.Date;
 public class Album {
     private Integer id;
     private String nombre;
-    private Date Fecha;
+    private Date fecha;
     private Integer id_banda;
 
     public String getNombre() {
@@ -16,7 +16,6 @@ public class Album {
         this.nombre = nombre;
     }
 
-
     public Integer getId() {
         return this.id;
     }
@@ -25,13 +24,12 @@ public class Album {
         this.id = id;
     }
 
-
     public Date getFecha() {
-        return this.Fecha;
+        return this.fecha;
     }
 
-    public void setFecha(Date Fecha) {
-        this.Fecha = Fecha;
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 
     public Integer getId_banda() {
@@ -41,5 +39,5 @@ public class Album {
     public void setId_banda(Integer id_banda) {
         this.id_banda = id_banda;
     }
-    
+
 }

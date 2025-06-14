@@ -26,7 +26,7 @@ type BandaEntryFormProps = {
   onBandaCreated?: () => void;
 };
 
-type BandaEntryFormUpdateProps = {
+type BandaEntryFormUpdateProps = () => {
   onBandaUpdate: () => void;
 };
 
@@ -122,7 +122,9 @@ function BandaEntryForm(props: BandaEntryFormProps) {
           </VerticalLayout>
         </VerticalLayout>
       </Dialog>
-      <Button onClick={open}>Registrar</Button>
+      <Button onClick={open} theme="primary">
+        ＋ Registrar Banda
+      </Button>
     </>
   );
 }
@@ -243,13 +245,7 @@ function index({ model }: { model: GridItemModel<Banda> }) {
 //   dateStyle: 'medium',
 // });
 
-function fechaRenderer({ item }: { item: Banda }) {
-  return (
-    <span>
-      {item.fechaCreacion ? dateFormatter.format(new Date(item.fechaCreacion)) : ''}
-    </span>
-  );
-}
+
 
 
 export default function BandaListView() {

@@ -10,6 +10,7 @@ import com.unl.clasesestructura.base.controller.dao.dao_models.DaoCancion;
 import com.unl.clasesestructura.base.controller.dao.dao_models.DaoGenero;
 import com.unl.clasesestructura.base.controller.data_structure.LinkedList;
 import com.unl.clasesestructura.base.models.Album;
+import com.unl.clasesestructura.base.models.Cancion;
 import com.unl.clasesestructura.base.models.Genero;
 import com.unl.clasesestructura.base.models.TipoArchivoEnum;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
@@ -50,17 +51,19 @@ public class CancionService {
      * @param idGenero ID del género asociado.
      * @throws Exception Si hay errores de validación o al guardar.
      */
-    public void createCancion(String nombre, String duracion, String url, TipoArchivoEnum tipo, Integer idGenero)
+    public void createCancion(String nombre, String duracion, String url, TipoArchivoEnum tipo, Integer idGenero,
+            Integer idAlbum)
             throws Exception {
         // Validación básica de campos obligatorios
         if (nombre.trim().length() > 0 && duracion.trim().length() > 0 && url.trim().length() > 0 && tipo != null
-                && idGenero != null) {
+                && idGenero != null && idAlbum != null) {
             // Asigna los valores al objeto Canción
             dc.getObj().setNombre(nombre);
             dc.getObj().setDuracion(Integer.parseInt(duracion));
             dc.getObj().setUrl(url);
             dc.getObj().setTipo(tipo);
             dc.getObj().setId_genero(idGenero);
+            dc.getObj().setId_album(idAlbum);
 
             // Intenta guardar la canción
             if (!dc.save()) {
@@ -203,6 +206,11 @@ public class CancionService {
             lista.add(tipo.name()); // Agrega cada valor del enum
         }
         return lista;
+    }
+
+    public List<Cancion> listAllCanciones() {
+        return Arrays.asList(dc.listAll().toArray());
+
     }
 
 }

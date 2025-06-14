@@ -9,6 +9,7 @@ import java.util.List;
 import com.unl.clasesestructura.base.controller.dao.dao_models.DaoAlbum;
 import com.unl.clasesestructura.base.controller.dao.dao_models.DaoBanda;
 import com.unl.clasesestructura.base.controller.data_structure.LinkedList;
+import com.unl.clasesestructura.base.models.Album;
 import com.unl.clasesestructura.base.models.Banda;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.hilla.BrowserCallable;
@@ -48,10 +49,10 @@ public class AlbumService {
      * @param idGenero ID del género asociado.
      * @throws Exception Si hay errores de validación o al guardar.
      */
-    public void createAlbum(String nombre, Date fecha, Integer idBanda)
+    public void createAlbum(@NotEmpty @NotBlank @NonNull String nombre, @NonNull Date fecha, Integer idBanda)
             throws Exception {
         // Validación básica de campos obligatorios
-        if (nombre.trim().length() > 0 && fecha != null && idBanda != null) {
+        if (nombre.trim().length() > 0 && fecha.toString().length() > 0 && idBanda != null) {
             // Asigna los valores al objeto Álbum
             da.getObj().setNombre(nombre);
             da.getObj().setFecha(fecha);
@@ -73,10 +74,10 @@ public class AlbumService {
      * @param idBanda ID de la banda asociada.
      * @throws Exception Si hay errores de validación o al actualizar.
      */
-    public void updateAlbum(Integer id, @NotEmpty @NotBlank @NonNull String nombre,
-            @NotEmpty @NotBlank @NonNull Date fecha, Integer idBanda) throws Exception {
+    public void updateAlbum(Integer id, @NotEmpty @NotBlank @NonNull String nombre, @NonNull Date fecha,
+            Integer idBanda) throws Exception {
         // Validación de campos y ID
-        if (id != null && id > 0 && nombre.trim().length() > 0 && fecha != null && idBanda != null) {
+        if (id != null && id > 0 && nombre.trim().length() > 0 && fecha.toString().length() > 0 && idBanda != null) {
             // Obtiene el álbum por ID y actualiza sus datos
             da.setObj(da.listAll().get(id - 1));
             da.getObj().setNombre(nombre);
@@ -125,7 +126,6 @@ public class AlbumService {
     }
 
     public List<HashMap> listAll() throws Exception {
-
         return Arrays.asList(da.all().toArray());
     }
 
@@ -139,6 +139,11 @@ public class AlbumService {
             return Arrays.asList(lista.toArray());
         else
             return new ArrayList<>();
+    }
+
+    public List<Album> listAllAlbums() {
+        return Arrays.asList(da.listAll().toArray());
+
     }
 
 }
