@@ -14,7 +14,7 @@ export const config: ViewConfig = {
   title: 'Género',
   menu: {
     icon: 'vaadin:clipboard-check',
-    order: 5,
+    order: 2,
     title: 'Género',
   },
 };

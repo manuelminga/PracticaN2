@@ -21,9 +21,13 @@ public class LinkedList<E> {
 
     private Node<E> getNode(Integer pos) {
         if (isEmpty()) {
-            throw new ArrayIndexOutOfBoundsException("La lista está vacía");
+            throw new ArrayIndexOutOfBoundsException("List empty");
+            // System.out.println("Lista vacia");
+            // return null;
         } else if (pos < 0 || pos >= length) {
-            throw new ArrayIndexOutOfBoundsException("Índice fuera de rango");
+            // System.out.println("Fuera de rango");
+            // return null;
+            throw new ArrayIndexOutOfBoundsException("Index out range");
         } else if (pos == 0) {
             return head;
         } else if ((length.intValue() - 1) == pos.intValue()) {
@@ -126,6 +130,29 @@ public class LinkedList<E> {
         length = 0;
     }
 
+    public E[] toArray() {
+        Class clazz = null;
+        E[] matriz = null;
+        if (this.length > 0) {
+            clazz = head.getData().getClass();
+            matriz = (E[]) java.lang.reflect.Array.newInstance(clazz, this.length);
+            Node<E> aux = head;
+            for (int i = 0; i < length; i++) {
+                matriz[i] = aux.getData();
+                aux = aux.getNext();
+            }
+        }
+        return matriz;
+    }
+
+    public LinkedList<E> toList(E[] matriz) {
+        clear();
+        for (int i = 0; i < matriz.length; i++) {
+            this.add(matriz[i]);
+        }
+        return this;
+    }
+
     protected E deleteFirst() throws Exception {
         if (isEmpty()) {
             throw new Exception("List empty");
@@ -185,26 +212,4 @@ public class LinkedList<E> {
         }
     }
 
-    public E[] toArray() {
-        Class clazz = null;
-        E[] matriz = null;
-        if (this.length > 0) {
-            clazz = head.getData().getClass();
-            matriz = (E[]) java.lang.reflect.Array.newInstance(clazz, this.length);
-            Node<E> aux = head;
-            for (int i = 0; i < length; i++) {
-                matriz[i] = aux.getData();
-                aux = aux.getNext();
-            }
-        }
-        return matriz;
-    }
-
-    public LinkedList<E> toList(E[] matriz) {
-        clear();
-        for (int i = 0; i < matriz.length; i++) {
-            this.add(matriz[i]);
-        }
-        return this;
-    }
 }

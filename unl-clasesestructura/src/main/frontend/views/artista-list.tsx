@@ -15,7 +15,7 @@ export const config: ViewConfig = {
   title: 'Artistas',
   menu: {
     icon: 'vaadin:clipboard-check',
-    order: 3,
+    order: 1,
     title: 'Artistas',
   },
 };

@@ -12,13 +12,14 @@ import { CancionService } from 'Frontend/generated/endpoints';
 import { useEffect, useState } from 'react';
 import TipoArchivoEnum from 'Frontend/generated/com/unl/clasesestructura/base/models/TipoArchivoEnum';
 import Cancion from 'Frontend/generated/com/unl/clasesestructura/base/models/Cancion';
+import Expresion from 'Frontend/generated/com/unl/clasesestructura/base/models/Expresion';
 import { order, updateCancion } from 'Frontend/generated/CancionService';
 
 export const config: ViewConfig = {
   title: 'Cancion',
   menu: {
     icon: 'vaadin:clipboard-check',
-    order: 4,
+    order: 5,
     title: 'Cancion',
   },
 };
@@ -27,8 +28,17 @@ type CancionEntryFormProps = {
   onCancionCreated?: () => void;
 };
 
-type CancionEntryFormUpdateProps = () => {
+type CancionEntryFormUpdateProps =  {
   onCancionUpdate?: () => void;
+  arguments: {
+    id: number;
+    nombre: string;
+    duracion: number;
+    url: string;
+    tipo: string;
+    id_genero?: number;
+    id_album?: number;
+  };
 };
 
 // crear Cancion
@@ -46,6 +56,7 @@ function CancionEntryForm(props: CancionEntryFormProps) {
     dialogOpened.value = false;
   };
 
+  const expresion = useSignal('');
   const nombre = useSignal('');
   const duracion = useSignal('');
   const url = useSignal('');
@@ -155,8 +166,8 @@ function CancionEntryForm(props: CancionEntryFormProps) {
         }
         footerRenderer={() => (
           <>
-            <Button onClick={close}>Cancelar</Button>
-            <Button theme="primary" onClick={createCancion}>
+            <Button onClick={close} className="btn-azulito">Cancelar</Button>
+            <Button theme="primary" onClick={createCancion} className="btn-gris">
               Registrar
             </Button>
           </>
@@ -223,7 +234,7 @@ function CancionEntryForm(props: CancionEntryFormProps) {
           />
         </VerticalLayout>
       </Dialog>
-      <Button onClick={open} theme="primary">
+      <Button onClick={open} theme="primary" className="btn-black">
         ＋ Registrar Canción
       </Button>
     </>
@@ -237,6 +248,7 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
   const [tipos, setTipos] = useState<String[]>([]);
   const [generos, setGeneros] = useState<{ id: string, label: string }[]>([]);
   const [albumes, setAlbumes] = useState<{ id: string, label: string }[]>([]);
+
 
   const open = () => {
     dialogOpened.value = true;
@@ -257,6 +269,18 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
   const genero = useSignal(props.arguments.id_genero?.toString() || '');
   const ident = useSignal(props.arguments.id);
   const album = useSignal(props.arguments.id_album?.toString() || '');
+
+
+      // Sincroniza los valores cuando cambian las props
+    useEffect(() => {
+      nombre.value = props.arguments.nombre;
+      duracion.value = initialDuration;
+      url.value = props.arguments.url;
+      tipo.value = props.arguments.tipo;
+      genero.value = props.arguments.id_genero?.toString() || '';
+      album.value = props.arguments.id_album?.toString() || '';
+    }, [props.arguments.nombre, props.arguments.duracion, props.arguments.id_banda]);
+
 
   const updateCancion = async () => {
     try {
@@ -346,8 +370,8 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
         }
         footerRenderer={() => (
           <>
-            <Button onClick={close}>Cancelar</Button>
-            <Button theme="primary" onClick={updateCancion}>
+            <Button onClick={close} className="btn-azulito">Cancelar</Button>
+            <Button theme="primary" onClick={updateCancion} className="btn-black">
               Actualizar
             </Button>
           </>
@@ -412,7 +436,7 @@ function CancionEntryFormUpdate(props: CancionEntryFormUpdateProps) {
           </VerticalLayout>
         </VerticalLayout>
       </Dialog>
-      <Button onClick={open}>Editar</Button>
+      <Button onClick={open} className="btn-gris">Editar</Button>
     </>
   );
 }
@@ -421,6 +445,16 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
   dateStyle: 'medium',
 });
 
+
+
+
+  function view_valid({ item }: { item: Expresion }) {
+    return (
+      <span>
+        {item.isCorrecto ? "Verdadero" : "Falso"}
+      </span>
+    );
+  }
 
 
 export default function CancionListView() {
@@ -434,14 +468,6 @@ export default function CancionListView() {
     callData();
   }, []);
 
-  function index({ model }: { model: GridItemModel<Cancion> }) {
-    return (
-      <span>
-        {model.index + 1}
-      </span>
-    );
-  }
-
   function link({ item }: { item: Cancion }) {
 
     return (
@@ -451,6 +477,16 @@ export default function CancionListView() {
       </span>
     );
   }
+
+    function index({ model }: { model: GridItemModel<Expresion> }) {
+    return (
+      <span>
+        {model.index + 1}
+      </span>
+    );
+  }
+
+
 
   /*   const dataProvider = useDataProvider<Cancion>({
     list: () => CancionService.listAllCancion(),
@@ -503,10 +539,22 @@ export default function CancionListView() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Para buscar
+  
+  // Variables reactivas para la búsqueda
+/**
+ * criterio: Signal que almacena el atributo seleccionado para buscar (por ejemplo, 
+ * 'nombre' o 'genero').
+ * texto: Signal que almacena el texto ingresado por el usuario para buscar.
+ */
   const criterio = useSignal('');
   const texto = useSignal('');
 
+
+  /**
+ * itemSelect: Opciones disponibles para el campo de selección de criterio de búsqueda.
+ * Cada opción tiene una etiqueta (label) y un valor (value) que corresponde 
+ * al atributo de la canción.
+ */
   const itemSelect = [
     {
       label: 'Nombre',
@@ -519,7 +567,11 @@ export default function CancionListView() {
   ];
 
 
+/**
+ * search: Función asíncrona que realiza la búsqueda de canciones 
+ * según el criterio y texto ingresados.
 
+ */
 const search = async () => {
   try {
     CancionService.search(criterio.value, texto.value, 0).then(function (data) {
@@ -558,7 +610,7 @@ const search = async () => {
     <main className="w-full h-full flex flex-col box-border gap-s p-m">
       <ViewToolbar title="Canciones">
         <Group>
-          <CancionEntryForm onCancionCreated={callData} />
+          <CancionEntryForm onCancionCreated={callData}/>
         </Group>
       </ViewToolbar>
       <HorizontalLayout theme="spacing" style={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}>
@@ -582,7 +634,7 @@ const search = async () => {
         >
           <Icon slot="prefix" icon="vaadin:search" />
         </TextField>
-        <Button onClick={search} theme="primary">
+        <Button onClick={search} theme="secondary" className="btn-azulito">
           Buscar
         </Button>
       </HorizontalLayout>
@@ -595,9 +647,9 @@ const search = async () => {
 
         {/* 4. Mostrar el nombre del género */}
         <GridSortColumn
-          path="id_genero"
+          path="genero"
           header="Género"
-          onDirectionChanged={(e) => order(e, 'id_genero')}
+          onDirectionChanged={(e) => order(e, 'genero')}
           renderer={({ item }) => <span>{getGeneroLabel(item.id_genero)}</span>}
         />
 
@@ -607,9 +659,15 @@ const search = async () => {
           renderer={({ item }) => <span>{formatDuration(item.duracion)}</span>}
         />
         <GridColumn path="url" header="Url" />
-        <GridColumn path="tipo" header="Tipo de Archivo" />
-        <GridColumn
+        <GridSortColumn
+         path="tipo" 
+         header="Tipo de Archivo"
+         onDirectionChanged={(e) => order(e, 'tipo')}
+       />
+        <GridSortColumn
+          path="album"
           header="Álbum"
+          onDirectionChanged={(e) => order(e, 'album')}
           renderer={({ item }) => <span>{getAlbumLabel(item.id_album)}</span>}
         />
         <GridColumn header="Acciones" renderer={link} />

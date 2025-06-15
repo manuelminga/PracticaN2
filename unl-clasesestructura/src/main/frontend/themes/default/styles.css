@@ -1,0 +1,20 @@
+/*Color de fondo y texto para botones titulos*/
+.btn-black {
+  background-color: #292828 !important;
+  color: #fff !important;
+  border: 2px solid #747171 !important;
+}
+
+/*Color de fondo y texto para botones de cancelar y buscar*/
+.btn-azulito {
+  background-color: #dae0e4 !important;
+  color: #000000 !important;
+  border: 2px solid #535151 !important;
+}
+
+/*Color de fondo y texto para botones de editar y registrar*/
+.btn-gris {
+  background-color: #434546 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}

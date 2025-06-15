@@ -6,7 +6,6 @@ import com.unl.clasesestructura.base.controller.Utiles;
 import com.unl.clasesestructura.base.controller.dao.AdapterDao;
 import com.unl.clasesestructura.base.controller.data_structure.LinkedList;
 import com.unl.clasesestructura.base.models.Album;
-import com.unl.clasesestructura.base.models.Banda;
 
 public class DaoAlbum extends AdapterDao<Album> {
     private Album obj;
@@ -48,20 +47,6 @@ public class DaoAlbum extends AdapterDao<Album> {
             // Log error
             return false;
         }
-    }
-
-    public LinkedList<Album> getListAll() {
-        if (aux == null) {
-            this.aux = listAll();
-        }
-        return aux;
-    }
-
-    // Método auxiliar para obtener el nombre de la banda de un álbum
-    private String getNombreBanda(Album album) {
-        // Busca la banda por id y retorna su nombre
-        Banda banda = new DaoBanda().listAll().get(album.getId_banda() - 1);
-        return banda.getNombre();
     }
 
     public LinkedList<HashMap<String, String>> all() throws Exception {

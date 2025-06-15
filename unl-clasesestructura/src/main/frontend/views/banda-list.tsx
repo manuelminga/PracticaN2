@@ -17,7 +17,7 @@ export const config: ViewConfig = {
   title: 'Banda',
   menu: {
     icon: 'vaadin:clipboard-check',
-    order: 2,
+    order: 3,
     title: 'Banda',
   },
 };

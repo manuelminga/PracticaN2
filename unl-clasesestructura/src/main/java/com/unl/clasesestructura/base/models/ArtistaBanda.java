@@ -38,6 +38,4 @@ public class ArtistaBanda {
         this.id_banda = id_banda;
     }
 
-
-
 }

@@ -25,8 +25,14 @@ type AlbumEntryFormProps = {
   onAlbumCreated?: () => void;
 };
 
-type AlbumEntryFormUpdateProps = () => {
+type AlbumEntryFormUpdateProps = {
   onAlbumUpdate?: () => void;
+  arguments: {
+    id: string;
+    nombre: string;
+    fechaCreacion: string;
+    id_banda?: number | string;
+  };
 };
 
 // crear Album
@@ -65,7 +71,7 @@ function AlbumEntryForm(props: AlbumEntryFormProps) {
 
       // Crear álbum
       await AlbumService.createAlbum(
-        nombre.value,
+        nombre.value.trim(),
         fecha.value!,
         parseInt(Banda.value)
 
@@ -97,7 +103,7 @@ function AlbumEntryForm(props: AlbumEntryFormProps) {
       .then((result) => setBanda(result.map(b => ({ id: b.id, label: b.label }))))
       .catch(console.error);
   }, []);
-
+  
   return (
     <>
       <Dialog
@@ -130,38 +136,48 @@ function AlbumEntryForm(props: AlbumEntryFormProps) {
         <VerticalLayout style={{ width: '300px', maxWidth: '100%', alignItems: 'stretch' }}>
           <TextField
             label="Nombre"
-            placeholder="Nombre del álbum"
+            placeholder="Nombre de la canción"
             value={nombre.value}
             onValueChanged={(e) => nombre.value = e.detail.value}
             required
           />
+
+
           <ComboBox
             label="Banda"
             items={banda}
             itemValuePath="id"
             itemLabelPath="label"
             value={Banda.value}
-            onValueChanged={(e) => { Banda.value = e.detail.value }}
+            onValueChanged={(e) => {
+              console.log('Banda seleccionada:', e.detail.value);
+              Banda.value = e.detail.value;
+            }}
             placeholder="Seleccione banda"
             required
           />
-          <DatePicker
-            label="Fecha de creación"
-            placeholder="Seleccione una fecha"
-            aria-label="Seleccione una fecha"
-            value={fecha.value ?? undefined}
-            onValueChanged={(evt) => (fecha.value = evt.detail.value)}
-          />
+            <DatePicker
+              label="Fecha de creación"
+              placeholder="Seleccione una fecha"
+              aria-label="Seleccione una fecha"
+              value={fecha.value ?? undefined}
+              onValueChanged={(evt) => (fecha.value = evt.detail.value)}
+            />
         </VerticalLayout>
       </Dialog>
       <Button onClick={open} theme="primary">
-        ＋ Registrar Álbum
+        ＋ Registrar Canción
       </Button>
     </>
   );
 }
 
-////***************************** */
+
+
+
+
+////******************Editar Álbum*********** */
+
 function AlbumEntryFormUpdate(props: AlbumEntryFormUpdateProps) {
   const dialogOpened = useSignal(false);
   const [banda, setBanda] = useState<{ id: string, label: string }[]>([]);
@@ -174,9 +190,19 @@ function AlbumEntryFormUpdate(props: AlbumEntryFormUpdateProps) {
     dialogOpened.value = false;
   };
 
+
   const nombre = useSignal(props.arguments.nombre);
-  const Banda = useSignal(props.arguments.id_banda?.toString() || '');
   const fecha = useSignal(props.arguments.fechaCreacion);
+  const ident = useSignal(props.arguments.id);
+  const Banda = useSignal(props.arguments.id_banda?.toString() || '');
+
+    // Sincroniza los valores cuando cambian las props
+  useEffect(() => {
+    nombre.value = props.arguments.nombre;
+    fecha.value = props.arguments.fechaCreacion;
+    Banda.value = props.arguments.id_banda?.toString() || '';
+  }, [props.arguments.nombre, props.arguments.fechaCreacion, props.arguments.id_banda]);
+
 
 
   const updateAlbum = async () => {
@@ -184,9 +210,9 @@ function AlbumEntryFormUpdate(props: AlbumEntryFormUpdateProps) {
       if (nombre.value.trim().length > 0 && Banda.value.trim().length > 0 && fecha.value.trim().length > 0) {
 
         await AlbumService.updateAlbum(
-          parseInt(props.arguments.id),
+          parseInt(ident.value),
           nombre.value,
-          fecha.value,
+          fecha.value!,
           parseInt(Banda.value)
         );
 
@@ -212,8 +238,6 @@ function AlbumEntryFormUpdate(props: AlbumEntryFormUpdateProps) {
       .then((result) => setBanda(result.map(b => ({ id: b.id, label: b.label }))))
       .catch(console.error);
   }, []);
-
-
 
   return (
     <>
@@ -304,6 +328,7 @@ export default function AlbumListView() {
     callData();
   }, []);
 
+
   function index({ model }: { model: GridItemModel<Album> }) {
     return (
       <span>
@@ -379,10 +404,10 @@ export default function AlbumListView() {
 
 
 
-      // Limpiar y cerrar
+/*       // Limpiar y cerrar
       criterio.value = '';
       texto.value = '';
-
+ */
 
 
       // Notificar y refrescar
@@ -439,15 +464,16 @@ export default function AlbumListView() {
 
         {/* 4. Mostrar el nombre de la banda */}
         <GridSortColumn
-          path="id_banda"
+          path="banda"
           header="Banda"
-          onDirectionChanged={(e) => order(e, 'id_banda')}
+          onDirectionChanged={(e) => order(e, 'banda')}
           renderer={({ item }) => <span>{getBandaLabel(item.id_banda)}</span>}
         />
         <GridSortColumn
           path="fecha"
           header="Fecha de creación"
           onDirectionChanged={(e) => order(e, 'fecha')}
+          
         />
         <GridColumn header="Acciones" renderer={link} />
       </Grid>
