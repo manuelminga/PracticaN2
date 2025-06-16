@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class Practica2 {
-    // Declaración de variables de clase
+
     private Integer[] matriz; // Arreglo para almacenar los datos numéricos
     private LinkedList<Integer> lista; // Lista enlazada para almacenar los mismos datos
 

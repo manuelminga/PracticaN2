@@ -155,24 +155,56 @@ public class CancionService {
     }
 
     /**
-     * Obtiene una lista detallada de canciones con información relacionada (género,
-     * álbum).
-     * 
-     * @return Lista de HashMap con todos los datos de canciones.
+     * Obtiene una lista detallada de canciones, cada una representada como un
+     * HashMap
+     * con sus atributos y datos relacionados (género, álbum, etc.).
+     *
+     * @return Lista de HashMap con los datos de todas las canciones.
+     * @throws Exception Si ocurre un error al obtener los datos.
      */
     public List<HashMap> listCancion() throws Exception {
         return Arrays.asList(dc.all().toArray());
     }
 
+    /**
+     * Obtiene una lista de todas las canciones en formato HashMap.
+     * Es funcionalmente equivalente a listCancion().
+     *
+     * @return Lista de HashMap con los datos de todas las canciones.
+     * @throws Exception Si ocurre un error al obtener los datos.
+     */
     public List<HashMap> listAll() throws Exception {
-
         return Arrays.asList(dc.all().toArray());
     }
 
+    /**
+     * Obtiene una lista de canciones ordenada por un atributo específico y tipo de
+     * orden.
+     *
+     * @param atribute Nombre del atributo por el cual ordenar (ej: "nombre",
+     *                 "genero").
+     * @param type     Tipo de orden (ascendente o descendente, según constantes de
+     *                 Utiles).
+     * @return Lista de HashMap con las canciones ordenadas.
+     * @throws Exception Si ocurre un error al ordenar los datos.
+     */
     public List<HashMap> order(String atribute, Integer type) throws Exception {
         return Arrays.asList(dc.orderByCancion(type, atribute).toArray());
     }
 
+    /**
+     * Busca canciones por un atributo y texto, con diferentes tipos de búsqueda.
+     *
+     * @param atribute Atributo por el cual buscar (ej: "nombre", "genero").
+     * @param text     Texto a buscar dentro del atributo.
+     * @param type     Tipo de búsqueda (1: derecha, 2: izquierda, otro: todo).
+     * @return HashMap con dos claves:
+     *         - "data": Lista de canciones encontradas (o vacía si no hay
+     *         resultados).
+     *         - "message": Mensaje de estado ("Datos no encontrados" si la lista
+     *         está vacía).
+     * @throws Exception Si ocurre un error durante la búsqueda.
+     */
     public HashMap<String, Object> search(String atribute, String text, Integer type) throws Exception {
         LinkedList<HashMap<String, String>> lista = dc.search(atribute, text, type);
         HashMap<String, Object> response = new HashMap<>();
@@ -186,16 +218,6 @@ public class CancionService {
         return response;
     }
 
-    /**
-     * Obtiene todas las canciones en formato de lista de objetos Cancion.
-     * 
-     * @return Lista de canciones.
-     */
-    /*
-     * public List<Cancion> listAllCancion() {
-     * return Arrays.asList(dc.listAll().toArray());
-     * }
-     */
     /**
      * Obtiene los tipos de archivo disponibles (valores del enum TipoArchivoEnum).
      * 

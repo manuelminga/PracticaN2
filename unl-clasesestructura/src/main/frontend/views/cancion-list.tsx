@@ -613,6 +613,7 @@ const search = async () => {
           <CancionEntryForm onCancionCreated={callData}/>
         </Group>
       </ViewToolbar>
+      
       <HorizontalLayout theme="spacing" style={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}>
         <Select items={itemSelect}
           value={criterio.value}
@@ -659,10 +660,12 @@ const search = async () => {
           renderer={({ item }) => <span>{formatDuration(item.duracion)}</span>}
         />
         <GridColumn path="url" header="Url" />
+        
         <GridSortColumn
          path="tipo" 
          header="Tipo de Archivo"
          onDirectionChanged={(e) => order(e, 'tipo')}
+         
        />
         <GridSortColumn
           path="album"

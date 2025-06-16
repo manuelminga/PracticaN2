@@ -14,48 +14,23 @@ import com.unl.clasesestructura.base.models.Cancion;
  * almacenadas.
  */
 public class DaoCancion extends AdapterDao<Cancion> {
-    /**
-     * Objeto Cancion que se utiliza como referencia para operaciones de
-     * persistencia.
-     */
+
     private Cancion obj;
 
-    /**
-     * Constructor de DaoCancion.
-     * Inicializa el DAO para la clase Cancion.
-     */
     public DaoCancion() {
         super(Cancion.class);
-        // Constructor autogenerado
     }
 
-    /**
-     * Obtiene el objeto Cancion actual.
-     * Si no existe, lo instancia.
-     * 
-     * @return Cancion actual.
-     */
     public Cancion getObj() {
         if (obj == null)
             this.obj = new Cancion();
         return this.obj;
     }
 
-    /**
-     * Asigna un objeto Cancion al DAO.
-     * 
-     * @param obj Objeto Cancion a asignar.
-     */
     public void setObj(Cancion obj) {
         this.obj = obj;
     }
 
-    /**
-     * Guarda el objeto Cancion actual en la base de datos.
-     * Asigna un ID autoincremental.
-     * 
-     * @return true si se guardó correctamente, false si hubo error.
-     */
     public Boolean save() {
         try {
             obj.setId(this.listAll().getLength() + 1); // Asigna ID único
@@ -66,12 +41,6 @@ public class DaoCancion extends AdapterDao<Cancion> {
         }
     }
 
-    /**
-     * Actualiza el objeto Cancion en la posición indicada.
-     * 
-     * @param pos Posición a actualizar.
-     * @return true si se actualizó correctamente, false si hubo error.
-     */
     public Boolean update(Integer pos) {
         try {
             this.update(obj, pos);
